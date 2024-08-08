@@ -10,23 +10,23 @@
   <packaging>pom</packaging>
   <properties>
       <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-      <teamcity.zstd.plugin.version>snapshot-${maven.build.timestamp}</teamcity.zstd.plugin.version>
-      <teamcity.zstd.plugin.vendorName>Plugin vendor name</teamcity.zstd.plugin.vendorName>
-      <teamcity.zstd.plugin.vendorUrl>Plugin vendor URL</teamcity.zstd.plugin.vendorUrl>
+      <teamcity.compression.plugin.version>snapshot-${maven.build.timestamp}</teamcity.compression.plugin.version>
+      <teamcity.compression.plugin.vendorName>Plugin vendor name</teamcity.compression.plugin.vendorName>
+      <teamcity.compression.plugin.vendorUrl>Plugin vendor URL</teamcity.compression.plugin.vendorUrl>
   </properties>
   <dependencies>
       <dependency>
-           <groupId>org.jetbrains.plugin</groupId>
+           <groupId>net.quasardb.teamcity</groupId>
            <artifactId>compression-plugin-agent</artifactId>
            <version>1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
-           <groupId>org.jetbrains.plugin</groupId>
+           <groupId>net.quasardb.teamcity</groupId>
            <artifactId>compression-plugin-common</artifactId>
            <version>1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
-           <groupId>org.jetbrains.plugin</groupId>
+           <groupId>net.quasardb.teamcity</groupId>
            <artifactId>compression-plugin-server</artifactId>
            <version>1.0-SNAPSHOT</version>
       </dependency>
@@ -51,15 +51,15 @@
                 <replacements>
                     <replacement>
                         <token>@Version@</token>
-                        <value>${teamcity.zstd.plugin.version}</value>
+                        <value>${teamcity.compression.plugin.version}</value>
                     </replacement>
                     <replacement>
                         <token>@VendorName@</token>
-                        <value>${teamcity.zstd.plugin.vendorName}</value>
+                        <value>${teamcity.compression.plugin.vendorName}</value>
                     </replacement>
                     <replacement>
                         <token>@VendorURL@</token>
-                        <value>${teamcity.zstd.plugin.vendorUrl}</value>
+                        <value>${teamcity.compression.plugin.vendorUrl}</value>
                     </replacement>
                 </replacements>                        
             </configuration>
@@ -75,7 +75,7 @@
                   <goal>single</goal>
                 </goals>
                 <configuration>
-                  <finalName>zstd-agent</finalName>
+                  <finalName>compression-plugin-agent</finalName>
                   <appendAssemblyId>false</appendAssemblyId>
                   <descriptors>
                     <descriptor>plugin-agent-assembly.xml</descriptor>
@@ -89,7 +89,7 @@
                   <goal>single</goal>
                 </goals>
                 <configuration>
-                  <finalName>zstd</finalName>
+                  <finalName>compression-plugin</finalName>
                   <outputDirectory>${project.parent.build.directory}</outputDirectory>
                   <appendAssemblyId>false</appendAssemblyId>
                   <descriptors>

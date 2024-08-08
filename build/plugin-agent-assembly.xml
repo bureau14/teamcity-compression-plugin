@@ -15,8 +15,8 @@
         <moduleSet>
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>org.jetbrains.plugin:zstd-agent</include>
-                <include>org.jetbrains.plugin:zstd-common</include>
+                <include>net.quasardb.teamcity:compression-plugin-agent</include>
+                <include>net.quasardb.teamcity:compression-plugin-common</include>
             </includes>
             <binaries>
                 <outputDirectory>lib</outputDirectory>
