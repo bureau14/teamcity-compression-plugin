@@ -25,6 +25,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jetbrains.teamcity.internal</groupId>
+      <artifactId>server</artifactId>
+      <version>${teamcity-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.jetbrains.teamcity</groupId>
       <artifactId>server-web-api</artifactId>
       <version>${teamcity-version}</version>
@@ -38,6 +45,14 @@
       <version>${teamcity-version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.github.luben</groupId>
+      <artifactId>zstd-jni</artifactId>
+      <version>1.5.6-4</version>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
