@@ -5,6 +5,7 @@
        default-autowire="constructor">
   <bean class="net.quasardb.teamcity.compression.storage.ZstdStorageType"/>
   <bean class="net.quasardb.teamcity.compression.cleanup.ZstdCleanupExtension"/>
+  <bean class="net.quasardb.teamcity.compression.util.ZstdArchiveExtractor"/>
   <bean class="net.quasardb.teamcity.compression.artifact.ZstdArtifactContentProvider"/>
   <bean class="net.quasardb.teamcity.compression.settings.ZstdPropertiesProcessor"/>
   <bean class="net.quasardb.teamcity.compression.web.ZstdSettingsController"/>
