@@ -1,7 +1,8 @@
 package net.quasardb.teamcity.compression.util;
 
-import com.intellij.openapi.diagnostic.Logger;
+import org.apache.log4j.Logger;
 import com.intellij.openapi.util.io.StreamUtil;
+import jetbrains.buildServer.ExtensionHolder;
 import jetbrains.buildServer.util.ArchiveExtractor;
 import jetbrains.buildServer.util.ArchiveFileSelector;
 import jetbrains.buildServer.util.FileUtil;
@@ -11,7 +12,6 @@ import jetbrains.buildServer.util.impl.ZipArchiveExtractor;
 import net.quasardb.compression.provider.zstd.ZstdCompressionProvider;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,40 +24,45 @@ import java.util.List;
 import java.util.Map;
 
 public class ZstdArchiveExtractor implements ArchiveExtractor {
-    private static final Logger LOG = Logger.getInstance(ZstdArchiveExtractor.class.getName());
+    private static final Logger LOG = Logger.getLogger(ZstdArchiveExtractor.class.getName());
     private final ZstdCompressionProvider compressionProvider;
     private final static byte[] ZSTD_MAGIC_HEADER = new byte[]{
             (byte)0x28, (byte)0xb5, (byte)0x2f, (byte)0xfd
     };
+    private final ExtensionHolder extensionHolder;
     List<ArchiveExtractor> standardExtractors = new ArrayList<>();
 
     private final static String TEMP_BUILD_FOLDER_KEY = "system.teamcity.build.tempDir";
     private final static String TEMP_DEFAULT = "/tmp";
     private final static String TEMP_FILE_PREFIX = "zstd_temp_";
     private final static String TEMP_FILE_SUFFIX = "_compression";
-
-    @Autowired
-    public ZstdArchiveExtractor(ZstdCompressionProvider compressionProvider) {
+    
+    public ZstdArchiveExtractor(ZstdCompressionProvider compressionProvider, ExtensionHolder extensionHolder) {
         this.compressionProvider = compressionProvider;
         standardExtractors.add(new TarArchiveExtractor());
         standardExtractors.add(new ZipArchiveExtractor());
         standardExtractors.add(new SevenZArchiveExtractor());
+        this.extensionHolder = extensionHolder;
+        LOG.info("ZSTD Extractor loaded");
 
     }
 
     @Override
     public boolean isSupported( File file) {
-
+        LOG.info("Call isSupported for "+file.getName());
         try {
             byte[] byteArray = Files.readAllBytes(file.toPath());
+
             return compressionProvider.test(byteArray);
-        } catch (IOException var10) {
+
+        } catch (IOException e) {
             return false;
         }
     }
 
     @Override
     public void extractFiles( File file,  ArchiveFileSelector archiveFileSelector) throws IOException {
+        LOG.info("Call extractFiles "+file.getName());
         byte[] byteArray = Files.readAllBytes(file.toPath());
         byte[] decompressed = compressionProvider.decompress(byteArray);
         String buildTempFolder = System.getProperty(TEMP_BUILD_FOLDER_KEY,TEMP_DEFAULT);
@@ -104,12 +109,19 @@ public class ZstdArchiveExtractor implements ArchiveExtractor {
     }
 
     @Override
-    public Map<String, Long> getEntitiesSize( File archive) throws IOException {
-        return ArchiveExtractor.super.getEntitiesSize(archive);
+    public Map<String, Long> getEntitiesSize( File file) throws IOException {
+        LOG.info("Call getEntitiesSize for "+file.getName());
+        return ArchiveExtractor.super.getEntitiesSize(file);
     }
 
     @Override
-    public Map<String, Integer> getEntitiesUnixPermissions( File archive) throws IOException {
-        return ArchiveExtractor.super.getEntitiesUnixPermissions(archive);
+    public Map<String, Integer> getEntitiesUnixPermissions( File file) throws IOException {
+        LOG.info("Call getEntitiesUnixPermissions for "+file.getName());
+        return ArchiveExtractor.super.getEntitiesUnixPermissions(file);
+    }
+
+    public void register() {
+        LOG.info("Registering plugin with "+extensionHolder.toString());
+        extensionHolder.registerExtension(ArchiveExtractor.class, this.getClass().getName(), this);
     }
 }

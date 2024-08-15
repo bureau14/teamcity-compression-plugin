@@ -4,31 +4,31 @@
   <parent>
     <artifactId>compression-plugin</artifactId>
     <groupId>net.quasardb.teamcity</groupId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
   </parent>
   <artifactId>build</artifactId>
   <packaging>pom</packaging>
   <properties>
       <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
       <teamcity.compression.plugin.version>snapshot-${maven.build.timestamp}</teamcity.compression.plugin.version>
-      <teamcity.compression.plugin.vendorName>Plugin vendor name</teamcity.compression.plugin.vendorName>
-      <teamcity.compression.plugin.vendorUrl>Plugin vendor URL</teamcity.compression.plugin.vendorUrl>
+      <teamcity.compression.plugin.vendorName>QuasarDB</teamcity.compression.plugin.vendorName>
+      <teamcity.compression.plugin.vendorUrl>https://quasar.ai/</teamcity.compression.plugin.vendorUrl>
   </properties>
   <dependencies>
       <dependency>
            <groupId>net.quasardb.teamcity</groupId>
            <artifactId>compression-plugin-agent</artifactId>
-           <version>1.1-SNAPSHOT</version>
+           <version>1.6-SNAPSHOT</version>
       </dependency>
       <dependency>
            <groupId>net.quasardb.teamcity</groupId>
            <artifactId>compression-plugin-common</artifactId>
-           <version>1.1-SNAPSHOT</version>
+           <version>1.6-SNAPSHOT</version>
       </dependency>
       <dependency>
            <groupId>net.quasardb.teamcity</groupId>
            <artifactId>compression-plugin-server</artifactId>
-           <version>1.1-SNAPSHOT</version>
+           <version>1.6-SNAPSHOT</version>
       </dependency>
   </dependencies>
   <build>

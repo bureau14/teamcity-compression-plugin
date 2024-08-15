@@ -1,10 +1,10 @@
 package net.quasardb.compression.provider.zstd;
 
-import com.intellij.openapi.diagnostic.Logger;
+import org.apache.log4j.Logger;
 import com.github.luben.zstd.Zstd;
 
 public class ZstdCompressionProvider {
-    private static final Logger LOG = Logger.getInstance(ZstdCompressionProvider.class.getName());
+    private static final Logger LOG = Logger.getLogger(ZstdCompressionProvider.class.getName());
     private int compressionLevel = 3;
 
     public ZstdCompressionProvider(int compressionLevel) {
@@ -27,12 +27,13 @@ public class ZstdCompressionProvider {
     }
 
     public boolean test(byte[] compressedBytes){
+        LOG.info("Testing file");
         try{
             long size = Zstd.getFrameContentSize(compressedBytes);
-            LOG.debug("Zstd Frame Content size: "+size);
+            LOG.info("Zstd Frame Content size: "+size);
             return size != -1;
         }catch (Exception e){
-            LOG.error("Archive is not zstd! {}", e);
+            LOG.info("Archive is not zstd! {}", e);
         }
         return false;
     }

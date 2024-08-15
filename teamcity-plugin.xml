@@ -4,9 +4,9 @@
     <name>compression-plugin</name>
     <display-name>compression</display-name>
     <version>@Version@</version>
-    <description>Plugin description</description>
-    <download-url>Plugin download URL</download-url>
-    <email>Plugin author e-mail</email>
+    <description>ZSTD compression and decompression for artifacts</description>
+    <download-url>https://github.com/bureau14/teamcity-compression-plugin/releases</download-url>
+    <email>voodoo144@gmail.com</email>
     <vendor>
       <name>@VendorName@</name>
       <url>@VendorURL@</url>
