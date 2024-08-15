@@ -3,7 +3,7 @@
 package net.quasardb.teamcity.compression.cleanup;
 
 
-import com.intellij.openapi.diagnostic.Logger;
+import org.apache.log4j.Logger;
 import jetbrains.buildServer.artifacts.ServerArtifactStorageSettingsProvider;
 import jetbrains.buildServer.serverSide.*;
 import jetbrains.buildServer.serverSide.artifacts.ServerArtifactHelper;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ZstdCleanupExtension implements BuildsCleanupExtension {
 
-    private final static Logger LOG = Logger.getInstance(ZstdCleanupExtension.class.getName());
+    private final static Logger LOG = Logger.getLogger(ZstdCleanupExtension.class.getName());
 
     public ZstdCleanupExtension(
             @NotNull ServerArtifactHelper helper,

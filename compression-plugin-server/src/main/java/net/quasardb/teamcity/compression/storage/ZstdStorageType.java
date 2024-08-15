@@ -1,6 +1,6 @@
 package net.quasardb.teamcity.compression.storage;
 
-import com.intellij.openapi.diagnostic.Logger;
+import org.apache.log4j.Logger;
 import jetbrains.buildServer.serverSide.PropertiesProcessor;
 import jetbrains.buildServer.serverSide.ServerSettings;
 import jetbrains.buildServer.serverSide.artifacts.ArtifactStorageType;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class ZstdStorageType extends ArtifactStorageType {
 
-    private final static Logger LOG = Logger.getInstance(ZstdStorageType.class.getName());
+    private final static Logger LOG = Logger.getLogger(ZstdStorageType.class.getName());
     private final String settingsPath;
     private final ServerSettings serverSettings;
 

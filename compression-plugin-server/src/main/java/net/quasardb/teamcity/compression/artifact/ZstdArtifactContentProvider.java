@@ -1,6 +1,6 @@
 package net.quasardb.teamcity.compression.artifact;
 
-import com.intellij.openapi.diagnostic.Logger;
+import org.apache.log4j.Logger;
 import jetbrains.buildServer.serverSide.ServerPaths;
 import jetbrains.buildServer.serverSide.artifacts.ArtifactContentProvider;
 import jetbrains.buildServer.serverSide.artifacts.StoredBuildArtifactInfo;
@@ -13,7 +13,7 @@ import java.io.InputStream;
 
 public class ZstdArtifactContentProvider  implements ArtifactContentProvider  {
 
-    private final static Logger LOG = Logger.getInstance(ZstdArtifactContentProvider.class.getName());
+    private final static Logger LOG = Logger.getLogger(ZstdArtifactContentProvider.class.getName());
 
     public ZstdArtifactContentProvider(@NotNull ServerPaths serverPaths,
                                         @NotNull ZstdCompressionProvider zstdCompressionProvider) {

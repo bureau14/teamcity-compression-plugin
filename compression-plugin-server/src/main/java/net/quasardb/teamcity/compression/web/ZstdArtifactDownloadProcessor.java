@@ -1,6 +1,6 @@
 package net.quasardb.teamcity.compression.web;
 
-import com.intellij.openapi.diagnostic.Logger;
+import org.apache.log4j.Logger;
 import jetbrains.buildServer.ExtensionsProvider;
 import jetbrains.buildServer.serverSide.BuildPromotion;
 import jetbrains.buildServer.serverSide.ProjectManagerEx;
@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class ZstdArtifactDownloadProcessor  implements ArtifactDownloadProcessor  {
 
-    private final static Logger LOG = Logger.getInstance(ZstdArtifactDownloadProcessor.class.getName());
+    private final static Logger LOG = Logger.getLogger(ZstdArtifactDownloadProcessor.class.getName());
     private final ExtensionsProvider extensionsProvider;
     private final ContentSecurityPolicyConfig contentSecurityPolicyConfig;
     private final ProjectManagerEx projectManager;

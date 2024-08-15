@@ -3,7 +3,7 @@
 package net.quasardb.teamcity.compression.web;
 
 
-import com.intellij.openapi.diagnostic.Logger;
+import org.apache.log4j.Logger;
 
 import jetbrains.buildServer.controllers.ActionErrors;
 import jetbrains.buildServer.controllers.BaseFormXmlController;
@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ZstdSettingsController extends BaseFormXmlController {
 
-  private final static Logger LOG = Logger.getInstance(ZstdSettingsController.class.getName());
+  private final static Logger LOG = Logger.getLogger(ZstdSettingsController.class.getName());
 
   public ZstdSettingsController(@NotNull final WebControllerManager manager,
                                 @NotNull final PluginDescriptor descriptor,

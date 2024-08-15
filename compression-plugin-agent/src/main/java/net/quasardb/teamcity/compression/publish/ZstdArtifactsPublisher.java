@@ -1,6 +1,6 @@
 package net.quasardb.teamcity.compression.publish;
 
-import com.intellij.openapi.diagnostic.Logger;
+import org.apache.log4j.Logger;
 import jetbrains.buildServer.ExtensionHolder;
 import jetbrains.buildServer.agent.*;
 import jetbrains.buildServer.agent.artifacts.AgentArtifactHelper;
@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 public class ZstdArtifactsPublisher implements DigestProducingArtifactsPublisher  {
 
-    private final static Logger LOG = Logger.getInstance(ZstdArtifactsPublisher.class.getName());
+    private final static Logger LOG = Logger.getLogger(ZstdArtifactsPublisher.class.getName());
     private final AgentArtifactHelper agentArtifactHelper;
     private final CurrentBuildTracker currentBuildTracker;
     private final BuildAgentConfiguration buildAgentConfiguration;
