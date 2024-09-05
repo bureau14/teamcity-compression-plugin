@@ -2,7 +2,7 @@
 <teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:schemas-jetbrains-com:teamcity-plugin-v1-xml">
   <info>
     <name>compression-plugin</name>
-    <display-name>compression</display-name>
+    <display-name>Compression</display-name>
     <version>@Version@</version>
     <description>ZSTD compression and decompression for artifacts</description>
     <download-url>https://github.com/bureau14/teamcity-compression-plugin/releases</download-url>
