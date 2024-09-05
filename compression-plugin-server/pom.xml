@@ -9,6 +9,7 @@
   <artifactId>compression-plugin-server</artifactId>
   <packaging>jar</packaging>
   <dependencies>
+
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>

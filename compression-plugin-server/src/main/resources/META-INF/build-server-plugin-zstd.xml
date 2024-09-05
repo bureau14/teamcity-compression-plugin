@@ -3,11 +3,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
-  <bean class="net.quasardb.teamcity.compression.storage.ZstdStorageType"/>
-  <bean class="net.quasardb.teamcity.compression.cleanup.ZstdCleanupExtension"/>
-  <bean class="net.quasardb.teamcity.compression.util.ZstdArchiveExtractor" init-method="register"/>
-  <bean class="net.quasardb.teamcity.compression.artifact.ZstdArtifactContentProvider"/>
-  <bean class="net.quasardb.teamcity.compression.settings.ZstdPropertiesProcessor"/>
-  <bean class="net.quasardb.teamcity.compression.web.ZstdSettingsController"/>
-  <bean class="net.quasardb.compression.provider.zstd.ZstdCompressionProvider"/>
+  <bean class="net.quasardb.teamcity.compression.provider.ZstdCompressionProvider"/>
+  <bean class="net.quasardb.teamcity.compression.extractor.ZstdArchiveExtractor" init-method="register"/>
 </beans>

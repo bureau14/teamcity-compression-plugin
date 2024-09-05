@@ -1,6 +1,5 @@
-package net.quasardb.teamcity.compression.util;
+package net.quasardb.teamcity.compression.extractor;
 
-import org.apache.log4j.Logger;
 import com.intellij.openapi.util.io.StreamUtil;
 import jetbrains.buildServer.ExtensionHolder;
 import jetbrains.buildServer.util.ArchiveExtractor;
@@ -9,9 +8,11 @@ import jetbrains.buildServer.util.FileUtil;
 import jetbrains.buildServer.util.impl.SevenZArchiveExtractor;
 import jetbrains.buildServer.util.impl.TarArchiveExtractor;
 import jetbrains.buildServer.util.impl.ZipArchiveExtractor;
-import net.quasardb.compression.provider.zstd.ZstdCompressionProvider;
+import net.quasardb.teamcity.compression.logging.Logger;
+import net.quasardb.teamcity.compression.provider.ZstdCompressionProvider;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ZstdArchiveExtractor implements ArchiveExtractor {
-    private static final Logger LOG = Logger.getLogger(ZstdArchiveExtractor.class.getName());
     private final ZstdCompressionProvider compressionProvider;
     private final static byte[] ZSTD_MAGIC_HEADER = new byte[]{
             (byte)0x28, (byte)0xb5, (byte)0x2f, (byte)0xfd
@@ -36,38 +36,44 @@ public class ZstdArchiveExtractor implements ArchiveExtractor {
     private final static String TEMP_DEFAULT = "/tmp";
     private final static String TEMP_FILE_PREFIX = "zstd_temp_";
     private final static String TEMP_FILE_SUFFIX = "_compression";
-    
+
     public ZstdArchiveExtractor(ZstdCompressionProvider compressionProvider, ExtensionHolder extensionHolder) {
         this.compressionProvider = compressionProvider;
         standardExtractors.add(new TarArchiveExtractor());
         standardExtractors.add(new ZipArchiveExtractor());
         standardExtractors.add(new SevenZArchiveExtractor());
         this.extensionHolder = extensionHolder;
-        LOG.info("ZSTD Extractor loaded");
-
+        Logger.info("ZSTD Extractor loaded");
     }
 
     @Override
     public boolean isSupported( File file) {
-        LOG.info("Call isSupported for "+file.getName());
+        Logger.info("Call isSupported for "+file.getName());
         try {
             byte[] byteArray = Files.readAllBytes(file.toPath());
 
             return compressionProvider.test(byteArray);
 
         } catch (IOException e) {
+            Logger.error("Caught exception during test of archive",e);
             return false;
         }
     }
 
     @Override
-    public void extractFiles( File file,  ArchiveFileSelector archiveFileSelector) throws IOException {
-        LOG.info("Call extractFiles "+file.getName());
+    public void extractFiles(File file, @NotNull ArchiveFileSelector archiveFileSelector) throws IOException {
+        Logger.info("Call extractFiles "+file.getName());
         byte[] byteArray = Files.readAllBytes(file.toPath());
+        Logger.debug("Decompressing "+file.getName());
         byte[] decompressed = compressionProvider.decompress(byteArray);
+
         String buildTempFolder = System.getProperty(TEMP_BUILD_FOLDER_KEY,TEMP_DEFAULT);
+        Logger.debug("Temp folder for decompressed file: "+buildTempFolder);
+
         File targetDirTempFile = new File(buildTempFolder+FileSystems.getDefault().getSeparator());
         File targetTempFile = File.createTempFile(TEMP_FILE_PREFIX,TEMP_FILE_SUFFIX, targetDirTempFile);
+
+        Logger.debug("Writing byte array to file: "+targetTempFile.getPath());
         FileUtils.writeByteArrayToFile(targetTempFile, decompressed);
         //need to figure out is this decompressed file something we support?
         ArchiveExtractor targetExtractor = null;
@@ -78,10 +84,13 @@ public class ZstdArchiveExtractor implements ArchiveExtractor {
                 break;
             }
         }
+
         if(targetExtractor!=null){
+            Logger.debug("Target extractor after decompress: "+targetExtractor);
             targetExtractor.extractFiles(targetTempFile,archiveFileSelector);
         } else {
             // no target extractor? is it pure file?
+            Logger.debug("Pure file decompressing");
             try {
                 String fileName = FilenameUtils.removeExtension(file.getName());
                 File destinationFile = archiveFileSelector.getDestinationFile(fileName);
@@ -102,7 +111,7 @@ public class ZstdArchiveExtractor implements ArchiveExtractor {
                         }
                 }
             } catch (Exception e){
-                LOG.error("Exception during extraction {}", e);
+                Logger.error("Exception during extraction",e);
             }
         }
 
@@ -110,18 +119,19 @@ public class ZstdArchiveExtractor implements ArchiveExtractor {
 
     @Override
     public Map<String, Long> getEntitiesSize( File file) throws IOException {
-        LOG.info("Call getEntitiesSize for "+file.getName());
+        Logger.info("Call getEntitiesSize for "+file.getName());
         return ArchiveExtractor.super.getEntitiesSize(file);
     }
 
     @Override
     public Map<String, Integer> getEntitiesUnixPermissions( File file) throws IOException {
-        LOG.info("Call getEntitiesUnixPermissions for "+file.getName());
+        Logger.info("Call getEntitiesUnixPermissions for "+file.getName());
         return ArchiveExtractor.super.getEntitiesUnixPermissions(file);
     }
 
     public void register() {
-        LOG.info("Registering plugin with "+extensionHolder.toString());
+        Logger.info("Registering plugin with "+extensionHolder.toString());
         extensionHolder.registerExtension(ArchiveExtractor.class, this.getClass().getName(), this);
     }
+
 }

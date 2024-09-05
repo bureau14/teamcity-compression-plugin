@@ -4,6 +4,5 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
-    <bean class="net.quasardb.teamcity.compression.publish.ZstdArtifactsPublisher"/>
-    <bean class="net.quasardb.compression.provider.zstd.ZstdCompressionProvider"/>
+    <bean class="net.quasardb.teamcity.compression.provider.ZstdCompressionProvider"/>
 </beans>

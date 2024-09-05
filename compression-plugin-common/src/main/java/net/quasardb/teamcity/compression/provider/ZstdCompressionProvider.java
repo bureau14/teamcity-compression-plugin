@@ -1,4 +1,4 @@
-package net.quasardb.compression.provider.zstd;
+package net.quasardb.teamcity.compression.provider;
 
 import org.apache.log4j.Logger;
 import com.github.luben.zstd.Zstd;
@@ -31,7 +31,7 @@ public class ZstdCompressionProvider {
         try{
             long size = Zstd.getFrameContentSize(compressedBytes);
             LOG.info("Zstd Frame Content size: "+size);
-            return size != -1;
+            return size >0;
         }catch (Exception e){
             LOG.info("Archive is not zstd! {}", e);
         }
