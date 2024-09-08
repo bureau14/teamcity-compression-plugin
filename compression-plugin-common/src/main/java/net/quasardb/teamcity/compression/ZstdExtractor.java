@@ -22,11 +22,11 @@ import java.nio.file.Path;
 import java.util.Map;
 
 public interface ZstdExtractor extends ArchiveExtractor {
-    static String TEMP_BUILD_FOLDER_KEY = "system.teamcity.build.tempDir";
-    static String TEMP_DEFAULT = "/tmp";
-    static String TEMP_FILE_PREFIX = "zstd_temp_";
-    static String TEMP_FILE_SUFFIX = "_compression";
-    static String ZSTD_COMPRESSION = "zstd";
+    String TEMP_BUILD_FOLDER_KEY = "system.teamcity.build.tempDir";
+    String TEMP_DEFAULT = "/tmp";
+    String TEMP_FILE_PREFIX = "zstd_temp_";
+    String TEMP_FILE_SUFFIX = "_compression";
+    String ZSTD_COMPRESSION = "zstd";
 
     ExtensionHolder getExtensionHolder();
 
