@@ -1,8 +1,9 @@
-package net.quasardb.teamcity.compression.tests;
+package tests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DecompressionTest {
+
     @Test
     public void testTarDecompression(){
 
@@ -10,11 +11,6 @@ public class DecompressionTest {
 
     @Test
     public void testZipDecompression(){
-
-    }
-
-    @Test
-    public void test7ZDecompression(){
 
     }
 

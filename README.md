@@ -8,23 +8,13 @@ This is project with Compression TeamCity plugin, that adds support for ZSTD and
 2. Install
    To install the plugin, put zip archive to 'plugins' dir under TeamCity data directory and restart the server.
 
-# To see plugin logs
+# Features
 
-Add this config to log4j configuration
+This plugin provided basic support for *.zst archives ( on serverside as well as agent side)
+1. Now you can use custom tools packaged as *tar.zst, *.zip.zst
+2. In the builds dependencies can be specified as \*.zst** => destination
 
-```xml
-     <DelegateAppender>
-      <RollingFile name="COMPRESSION.LOG" fileName="${sys:teamcity_logs}/teamcity-compression-plugin.log"
-                   filePattern="${sys:teamcity_logs}/teamcity-compression-plugin.log.%i"
-                   append="true" createOnDemand="true">
-        <PatternLayout pattern="[%d] %6p - %30.30c - %m%n" charset="UTF-8"/>
-        <SizeBasedTriggeringPolicy size="10 MB"/>
-        <DefaultRolloverStrategy max="3" fileIndex="min"/>
-      </RollingFile>
-    </DelegateAppender>
+# Logs
 
-<Logger name="net.quasardb" level="DEBUG" additivity="false">
-    <AppenderRef ref="COMPRESSION.LOG" />
-</Logger>
+Plugin will ue root serer logger to write logs. 
 
-```
