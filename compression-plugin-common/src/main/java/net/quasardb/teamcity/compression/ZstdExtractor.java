@@ -13,25 +13,31 @@ import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 public interface ZstdExtractor extends ArchiveExtractor {
     String TEMP_BUILD_FOLDER_KEY = "system.teamcity.build.tempDir";
     String TEMP_DEFAULT = "/tmp";
     String TEMP_FILE_PREFIX = "zstd_temp_";
-    String TEMP_FILE_SUFFIX = "_compression";
+    String TEMP_FILE_SUFFIX = "_decompressed";
     String ZSTD_COMPRESSION = "zstd";
 
     ExtensionHolder getExtensionHolder();
 
+    default String getTempDefault(){
+        return TEMP_DEFAULT;
+    }
+
     default String getArchiver(@NotNull File archive) throws ArchiveException, IOException {
-        try (InputStream is = Files.newInputStream(archive.toPath())) {
+        try (InputStream is = new BufferedInputStream(Files.newInputStream(archive.toPath()))) {
             String archiver = ArchiveStreamFactory.detect(is);
             Logger.debug("Detected archiver: " + archiver);
             return archiver;
@@ -43,7 +49,7 @@ public interface ZstdExtractor extends ArchiveExtractor {
         Logger.info("Call isSupported for "+archive.getName());
         boolean result = false;
         try {
-            try(InputStream inputStream = Files.newInputStream(archive.toPath())){
+            try(InputStream inputStream = new BufferedInputStream(Files.newInputStream(archive.toPath()))){
                 result = ZstdCompressionUtils.test(inputStream);
             }
         } catch (IOException e) {
@@ -57,7 +63,7 @@ public interface ZstdExtractor extends ArchiveExtractor {
     default void extractFiles(@NotNull File archive, @NotNull ArchiveFileSelector archiveFileSelector) throws IOException {
         Logger.info("Call extractFiles " + archive.getName());
         try {
-            String buildTempFolder = System.getProperty(TEMP_BUILD_FOLDER_KEY, TEMP_DEFAULT);
+            String buildTempFolder = System.getProperty(TEMP_BUILD_FOLDER_KEY, getTempDefault());
             Logger.debug("Temp folder for decompressed file: "+buildTempFolder);
 
             File targetDirTempFile = new File(buildTempFolder+ FileSystems.getDefault().getSeparator());
@@ -70,19 +76,24 @@ public interface ZstdExtractor extends ArchiveExtractor {
 
             try (InputStream is = Files.newInputStream(archivePath)) {
                 try (CompressorInputStream in = new CompressorStreamFactory().createCompressorInputStream(ZSTD_COMPRESSION, is)) {
-                    Files.copy(in, targetTempFilePath);
-                    String archiver = getArchiver(targetTempFile);
-                    ArchiveStreamFactory factory = new ArchiveStreamFactory();
-                    ArchiveInputStream ais = factory.createArchiveInputStream(archiver,Files.newInputStream(targetTempFilePath));
+                    Files.copy(in, targetTempFilePath, StandardCopyOption.REPLACE_EXISTING);
+                    try{
+                        String archiver = getArchiver(targetTempFile);
+                        ArchiveStreamFactory factory = new ArchiveStreamFactory();
+                        ArchiveInputStream ais = factory.createArchiveInputStream(archiver,Files.newInputStream(targetTempFilePath));
+
+                    } catch (ArchiveException e){
+                        Logger.error("Decompressed file is not archive", e);
+                    }
 
                 }
 
             } catch (CompressorException e) {
-                Logger.error("Compressor exception during handling archive", e);
+                Logger.error("ZSTD Compressor exception during handling archive", e);
                 throw new IOException(e.getMessage());
             }
         } catch (Exception e){
-            Logger.error("Exception during decompression", e);
+            Logger.error("ZSTD Exception during decompression", e);
             throw new IOException(e.getMessage());
         }
     }
