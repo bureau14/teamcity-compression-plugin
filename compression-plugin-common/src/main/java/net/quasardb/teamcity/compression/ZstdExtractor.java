@@ -19,10 +19,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -94,8 +91,15 @@ public interface ZstdExtractor extends ArchiveExtractor {
         }
     }
 
-    default void processSingleFile(Path file, ArchiveFileSelector archiveFileSelector) {
-
+    default void processSingleFile(Path file, ArchiveFileSelector archiveFileSelector) throws IOException {
+        File destinationFile = archiveFileSelector.getDestinationFile(file.toFile().getName());
+        if (destinationFile != null) {
+            File parentDir = destinationFile.getParentFile();
+            if (parentDir != null) {
+                parentDir.mkdirs();
+            }
+            Files.copy(file,destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     default void postProcessEntry(@NotNull ArchiveEntry entry, @NotNull File file, @Nullable File root) {
