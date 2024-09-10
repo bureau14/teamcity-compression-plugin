@@ -1,6 +1,7 @@
 package net.quasardb.teamcity.compression;
 
 import jetbrains.buildServer.ExtensionHolder;
+import jetbrains.buildServer.serverSide.TeamCityProperties;
 import jetbrains.buildServer.util.ArchiveExtractor;
 import jetbrains.buildServer.util.ArchiveFileSelector;
 import net.quasardb.teamcity.compression.logging.Logger;
@@ -26,17 +27,11 @@ import java.util.Map;
 import static net.quasardb.teamcity.compression.utils.ZstdCompressionUtils.copyStreamToFile;
 
 public interface ZstdExtractor extends ArchiveExtractor {
-    String TEMP_BUILD_FOLDER_KEY = "system.teamcity.build.tempDir";
-    String TEMP_DEFAULT = "/tmp";
     String TEMP_FILE_PREFIX = "zstd_temp_";
     String TEMP_FILE_SUFFIX = "_decompressed";
     String ZSTD_COMPRESSION = "zstd";
 
     ExtensionHolder getExtensionHolder();
-
-    default String getTempDefault() {
-        return TEMP_DEFAULT;
-    }
 
     default boolean isSupportedArchiveType(@NotNull File archive) {
         Logger.info("Call isSupportedArchiveType for " + archive.getName());
@@ -98,7 +93,7 @@ public interface ZstdExtractor extends ArchiveExtractor {
             if (parentDir != null) {
                 parentDir.mkdirs();
             }
-            Files.copy(file,destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(file, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
@@ -110,26 +105,26 @@ public interface ZstdExtractor extends ArchiveExtractor {
     default void extractFiles(@NotNull File archive, @NotNull ArchiveFileSelector archiveFileSelector) throws IOException {
         Logger.info("Call extractFiles " + archive.getName());
         try {
-            String buildTempFolder = System.getProperty(TEMP_BUILD_FOLDER_KEY, getTempDefault());
-            Logger.debug("Temp folder for decompressed file: " + buildTempFolder);
+            String archiveParentFolder = archive.getParent();
+            Logger.debug("Folder for decompressed file: " + archiveParentFolder);
 
-            File targetDirTempFile = new File(buildTempFolder + FileSystems.getDefault().getSeparator());
-            File targetTempFile = File.createTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX, targetDirTempFile);
+            File targetDirTempFile = new File(archiveParentFolder);
+            File decompressedTempFile = File.createTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX, targetDirTempFile);
 
             Path archivePath = archive.toPath();
-            Path targetTempFilePath = targetTempFile.toPath();
+            Path decompressedTempFilePath = decompressedTempFile.toPath();
 
-            Logger.debug("Writing byte array to file: " + targetTempFilePath);
+            Logger.debug("Writing byte array to file: " + decompressedTempFilePath);
 
             try (InputStream is = Files.newInputStream(archivePath)) {
                 try (CompressorInputStream in = new CompressorStreamFactory().createCompressorInputStream(ZSTD_COMPRESSION, is)) {
-                    Files.copy(in, targetTempFilePath, StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(in, decompressedTempFilePath, StandardCopyOption.REPLACE_EXISTING);
 
-                    boolean isArchive = isSupportedArchiveType(targetTempFilePath.toFile());
+                    boolean isArchive = isSupportedArchiveType(decompressedTempFile);
                     if (isArchive) {
-                        processArchive(targetTempFilePath, archiveFileSelector);
+                        processArchive(decompressedTempFilePath, archiveFileSelector);
                     } else {
-                        processSingleFile(targetTempFilePath, archiveFileSelector);
+                        processSingleFile(decompressedTempFilePath, archiveFileSelector);
                     }
 
                 }

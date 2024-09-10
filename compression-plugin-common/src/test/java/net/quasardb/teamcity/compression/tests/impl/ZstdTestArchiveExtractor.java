@@ -11,11 +11,6 @@ public class ZstdTestArchiveExtractor implements ZstdExtractor {
     }
 
     @Override
-    public String getTempDefault() {
-        return this.targetTempFolderDefault;
-    }
-
-    @Override
     public ExtensionHolder getExtensionHolder() {
         return null;
     }
