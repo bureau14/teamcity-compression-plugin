@@ -21,13 +21,13 @@
             <binaries>
                 <outputDirectory>lib</outputDirectory>
                 <unpack>false</unpack>
-                <dependencySets>
-                    <dependencySet>
-                        <includes>
-                            <include>*</include>
-                        </includes>
-                    </dependencySet>
-                </dependencySets>
+<!--                <dependencySets>-->
+<!--                    <dependencySet>-->
+<!--                        <includes>-->
+<!--                            <include>*</include>-->
+<!--                        </includes>-->
+<!--                    </dependencySet>-->
+<!--                </dependencySets>-->
             </binaries>
         </moduleSet>
     </moduleSets>
