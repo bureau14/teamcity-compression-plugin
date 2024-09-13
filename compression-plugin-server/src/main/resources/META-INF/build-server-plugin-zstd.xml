@@ -3,6 +3,5 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
-  <bean id="nativeLibraryPathHacker" class="jetbrains.buildServer.NativeLibraryPathHacker"/>
-  <bean class="net.quasardb.teamcity.compression.extractor.ZstdServerArchiveExtractor" depends-on="nativeLibraryPathHacker" init-method="register"/>
+  <bean class="net.quasardb.teamcity.compression.extractor.ZstdServerArchiveExtractor" init-method="register"/>
 </beans>

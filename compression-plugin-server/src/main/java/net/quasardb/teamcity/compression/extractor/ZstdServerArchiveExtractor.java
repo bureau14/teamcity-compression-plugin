@@ -12,11 +12,6 @@ public class ZstdServerArchiveExtractor implements ZstdExtractor {
         this.extensionHolder = extensionHolder;
         Logger.info("ZSTD Server Extractor loaded");
         Logger.info("ZSTD Server Native version:" + ZstdVersion.VERSION);
-        try {
-            Class.forName("com.github.luben.zstd.ZstdInputStream");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

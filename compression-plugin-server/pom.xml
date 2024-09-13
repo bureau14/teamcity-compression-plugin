@@ -4,7 +4,7 @@
   <parent>
     <artifactId>compression-plugin</artifactId>
     <groupId>net.quasardb.teamcity</groupId>
-    <version>2.3</version>
+    <version>1.0</version>
   </parent>
   <artifactId>compression-plugin-server</artifactId>
   <packaging>jar</packaging>
@@ -20,7 +20,7 @@
     <dependency>
       <groupId>net.quasardb.teamcity</groupId>
       <artifactId>compression-plugin-common</artifactId>
-      <version>2.3</version>
+      <version>1.0</version>
       <scope>compile</scope>
     </dependency>
 
@@ -79,13 +79,6 @@
       <artifactId>tests-support</artifactId>
       <version>${teamcity-version}</version>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.luben</groupId>
-      <artifactId>zstd-jni</artifactId>
-      <version>1.5.6-4</version>
-      <scope>provided</scope>
     </dependency>
 
   </dependencies>

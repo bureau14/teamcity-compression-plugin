@@ -1,7 +1,6 @@
 package net.quasardb.teamcity.compression;
 
 import jetbrains.buildServer.ExtensionHolder;
-import jetbrains.buildServer.serverSide.TeamCityProperties;
 import jetbrains.buildServer.util.ArchiveExtractor;
 import jetbrains.buildServer.util.ArchiveFileSelector;
 import net.quasardb.teamcity.compression.logging.Logger;
@@ -10,7 +9,6 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
-import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.jetbrains.annotations.NotNull;
@@ -128,9 +126,6 @@ public interface ZstdExtractor extends ArchiveExtractor {
                     }
 
                 }
-            } catch (CompressorException e) {
-                Logger.error("ZSTD Compressor exception during handling archive", e);
-                throw new IOException(e.getMessage());
             }
         } catch (Exception e) {
             Logger.error("ZSTD Exception during decompression", e);
