@@ -23,6 +23,7 @@ To correctly add JNI lib to TeamCity and TeamCity agent please do following:
 1. Download library distribution here: https://repo1.maven.org/maven2/com/github/luben/zstd-jni/1.5.6-4/zstd-jni-1.5.6-4.jar
 2. Copy downloaded file to <Team-City installation folder>/libs
 3. Copy file to <Team-City installation-folder>/buildAgent/libs
+4. Restart Team-City server and Agent ( if you run agent as separate os level service)
 
 
 # Features
