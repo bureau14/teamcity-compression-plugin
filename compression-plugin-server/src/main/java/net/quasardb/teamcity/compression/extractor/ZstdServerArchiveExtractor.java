@@ -11,7 +11,8 @@ public class ZstdServerArchiveExtractor implements ZstdExtractor {
     public ZstdServerArchiveExtractor(ExtensionHolder extensionHolder) {
         this.extensionHolder = extensionHolder;
         Logger.info("ZSTD Server Extractor loaded");
-        Logger.info("ZSTD Server Native version:" + ZstdVersion.VERSION);
+        loadNativeZstdLib();
+        Logger.info("ZSTD Server Lib version: " + ZstdVersion.VERSION);
     }
 
     @Override
