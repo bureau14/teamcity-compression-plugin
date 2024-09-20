@@ -16,7 +16,7 @@ To install the plugin, put zip archive to 'plugins' dir under TeamCity data dire
 2. Open Plugins
 3. Upload plugin zip file and click "Enable" button
 
-### Additional libraries installation
+### Additional libraries installation ( DO NOT REQUIRED WITH VERSION 1.1 )
 To decompress zstd archives plugin uses Java JNI binding for zst library. 
 This binding could not be loaded with plugin ( despite that plugin already have inside all necessary libs)
 To correctly add JNI lib to TeamCity and TeamCity agent please do following:
