@@ -4,11 +4,8 @@ import jetbrains.buildServer.ExtensionHolder;
 import net.quasardb.teamcity.compression.ZstdExtractor;
 
 public class ZstdTestArchiveExtractor implements ZstdExtractor {
-    private final String targetTempFolderDefault;
 
-    public ZstdTestArchiveExtractor(String targetTempFolderDefault) {
-        this.targetTempFolderDefault = targetTempFolderDefault;
-    }
+    public ZstdTestArchiveExtractor() {}
 
     @Override
     public ExtensionHolder getExtensionHolder() {
