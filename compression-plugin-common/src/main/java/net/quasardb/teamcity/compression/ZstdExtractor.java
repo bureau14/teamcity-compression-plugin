@@ -1,5 +1,6 @@
 package net.quasardb.teamcity.compression;
 
+import com.github.luben.zstd.util.Native;
 import jetbrains.buildServer.ExtensionHolder;
 import jetbrains.buildServer.util.ArchiveExtractor;
 import jetbrains.buildServer.util.ArchiveFileSelector;
@@ -32,7 +33,7 @@ public interface ZstdExtractor extends ArchiveExtractor {
     ExtensionHolder getExtensionHolder();
 
     default boolean isSupportedArchiveType(@NotNull File archive) {
-        Logger.info("Call isSupportedArchiveType for " + archive.getName());
+        Logger.debug("Call isSupportedArchiveType for " + archive.getName());
         boolean result = false;
         try {
             try (InputStream inputStream = new BufferedInputStream(Files.newInputStream(archive.toPath()))) {
@@ -41,13 +42,13 @@ public interface ZstdExtractor extends ArchiveExtractor {
         } catch (IOException e) {
             Logger.error("Caught exception during test of archive", e);
         }
-        Logger.info("isSupportedArchiveType: " + result);
+        Logger.debug("isSupportedArchiveType: " + result);
         return result;
     }
 
     @Override
     default boolean isSupported(@NotNull File archive) {
-        Logger.info("Call isSupported for " + archive.getName());
+        Logger.debug("Call isSupported for " + archive.getName());
         boolean result = false;
         try {
             try (InputStream inputStream = new BufferedInputStream(Files.newInputStream(archive.toPath()))) {
@@ -101,7 +102,7 @@ public interface ZstdExtractor extends ArchiveExtractor {
 
     @Override
     default void extractFiles(@NotNull File archive, @NotNull ArchiveFileSelector archiveFileSelector) throws IOException {
-        Logger.info("Call extractFiles " + archive.getName());
+        Logger.debug("Call extractFiles " + archive.getName());
         try {
             String archiveParentFolder = archive.getParent();
             Logger.debug("Folder for decompressed file: " + archiveParentFolder);
@@ -135,19 +136,26 @@ public interface ZstdExtractor extends ArchiveExtractor {
 
     @Override
     default Map<String, Long> getEntitiesSize(@NotNull File archive) throws IOException {
-        Logger.info("Call getEntitiesSize for " + archive.getName());
+        Logger.debug("Call getEntitiesSize for " + archive.getName());
         return ArchiveExtractor.super.getEntitiesSize(archive);
     }
 
     @Override
     default Map<String, Integer> getEntitiesUnixPermissions(@NotNull File archive) throws IOException {
-        Logger.info("Call getEntitiesUnixPermissions for " + archive.getName());
+        Logger.debug("Call getEntitiesUnixPermissions for " + archive.getName());
         return ArchiveExtractor.super.getEntitiesUnixPermissions(archive);
     }
 
     default void register() {
-        Logger.info("Registering plugin " + this.getClass().getName() + " with " + getExtensionHolder().toString());
+        Logger.debug("Registering plugin " + this.getClass().getName() + " with " + getExtensionHolder().toString());
         getExtensionHolder().registerExtension(ArchiveExtractor.class, this.getClass().getName(), this);
+    }
+
+    default void loadNativeZstdLib(){
+        Logger.debug("ZSTD Loading Native lib...");
+        Native.load();
+        Logger.info("ZSTD Native Library loaded: "+Native.isLoaded());
+        Logger.debug("ZSTD Plugin ClassLoader: "+this.getClass().getClassLoader().toString());
     }
 
 }
