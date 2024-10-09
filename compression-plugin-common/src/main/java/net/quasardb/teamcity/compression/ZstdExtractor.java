@@ -1,27 +1,30 @@
 package net.quasardb.teamcity.compression;
 
 import com.github.luben.zstd.util.Native;
+import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.openapi.util.SystemInfo;
 import jetbrains.buildServer.ExtensionHolder;
+import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.util.ArchiveExtractor;
 import jetbrains.buildServer.util.ArchiveFileSelector;
+import jetbrains.buildServer.util.FileUtil;
 import net.quasardb.teamcity.compression.logging.Logger;
 import net.quasardb.teamcity.compression.utils.ZstdCompressionUtils;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.*;
-import java.util.Arrays;
-import java.util.Map;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static net.quasardb.teamcity.compression.utils.ZstdCompressionUtils.copyStreamToFile;
 
@@ -32,18 +35,20 @@ public interface ZstdExtractor extends ArchiveExtractor {
 
     ExtensionHolder getExtensionHolder();
 
-    default boolean isSupportedArchiveType(@NotNull File archive) {
+    default List<ArchiveExtractor> getAvailableArchiveExtractors() {
+        return new ArrayList<>(getExtensionHolder().getExtensions(ArchiveExtractor.class));
+    }
+
+    default ArchiveExtractor getArchiveType(@NotNull File archive) {
         Logger.debug("Call isSupportedArchiveType for " + archive.getName());
-        boolean result = false;
-        try {
-            try (InputStream inputStream = new BufferedInputStream(Files.newInputStream(archive.toPath()))) {
-                result = ZstdCompressionUtils.isArchiveOfType(inputStream, Arrays.asList(ArchiveStreamFactory.TAR, ArchiveStreamFactory.ZIP));
+
+        for( ArchiveExtractor ae: getAvailableArchiveExtractors()){
+            if(ae.isSupported(archive)){
+                Logger.debug("File "+archive.getName()+" type: " + ae);
+                return ae;
             }
-        } catch (IOException e) {
-            Logger.error("Caught exception during test of archive", e);
         }
-        Logger.debug("isSupportedArchiveType: " + result);
-        return result;
+        return null;
     }
 
     @Override
@@ -61,27 +66,9 @@ public interface ZstdExtractor extends ArchiveExtractor {
         return result;
     }
 
-    default void processArchive(Path file, ArchiveFileSelector archiveFileSelector) throws IOException, ArchiveException {
-        File root = archiveFileSelector.getDestinationRoot();
-        ArchiveStreamFactory factory = new ArchiveStreamFactory();
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(file));
-        ArchiveInputStream archiveStream = factory.createArchiveInputStream(bufferedInputStream);
-        ArchiveEntry entry;
-        while ((entry = archiveStream.getNextEntry()) != null) {
-            File destinationFile = archiveFileSelector.getDestinationFile(entry.getName());
-            if (destinationFile != null) {
-                if (entry.isDirectory()) {
-                    destinationFile.mkdirs();
-                    this.postProcessEntry(entry, destinationFile, root);
-                } else {
-                    File parentDir = destinationFile.getParentFile();
-                    if (parentDir != null) {
-                        parentDir.mkdirs();
-                    }
-                    copyStreamToFile(archiveStream, destinationFile);
-                    this.postProcessEntry(entry, destinationFile, root);
-                }
-            }
+    default void processArchive(Path file, ArchiveFileSelector archiveFileSelector, ArchiveExtractor externalArchiveExtractor) throws IOException, ArchiveException {
+        if(externalArchiveExtractor!=null){
+            externalArchiveExtractor.extractFiles(file.toFile(), archiveFileSelector);
         }
     }
 
@@ -94,10 +81,6 @@ public interface ZstdExtractor extends ArchiveExtractor {
             }
             Files.copy(file, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
-    }
-
-    default void postProcessEntry(@NotNull ArchiveEntry entry, @NotNull File file, @Nullable File root) {
-        file.setLastModified(entry.getLastModifiedDate().getTime());
     }
 
     @Override
@@ -119,9 +102,9 @@ public interface ZstdExtractor extends ArchiveExtractor {
                 try (CompressorInputStream in = new CompressorStreamFactory().createCompressorInputStream(ZSTD_COMPRESSION, is)) {
                     Files.copy(in, decompressedTempFilePath, StandardCopyOption.REPLACE_EXISTING);
 
-                    boolean isArchive = isSupportedArchiveType(decompressedTempFile);
-                    if (isArchive) {
-                        processArchive(decompressedTempFilePath, archiveFileSelector);
+                    ArchiveExtractor supportedExtractor = getArchiveType(decompressedTempFile);
+                    if (supportedExtractor!=null) {
+                        processArchive(decompressedTempFilePath, archiveFileSelector, supportedExtractor);
                     } else {
                         processSingleFile(decompressedTempFilePath, archiveFileSelector);
                     }
