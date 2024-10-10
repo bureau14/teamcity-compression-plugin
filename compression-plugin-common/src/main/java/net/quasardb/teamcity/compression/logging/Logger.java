@@ -15,4 +15,8 @@ public class Logger {
     public static void error(String message, Throwable e){
         Loggers.SERVER.error(message,e);
     }
+
+    public static void error(String message){
+        Loggers.SERVER.error(message);
+    }
 }
