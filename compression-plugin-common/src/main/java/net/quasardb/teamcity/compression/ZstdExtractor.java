@@ -8,6 +8,8 @@ import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.util.ArchiveExtractor;
 import jetbrains.buildServer.util.ArchiveFileSelector;
 import jetbrains.buildServer.util.FileUtil;
+import net.quasardb.teamcity.compression.filesystem.StagingArea;
+import net.quasardb.teamcity.compression.filesystem.impl.TempStagingArea;
 import net.quasardb.teamcity.compression.logging.Logger;
 import net.quasardb.teamcity.compression.utils.ZstdCompressionUtils;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -29,8 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static net.quasardb.teamcity.compression.utils.ZstdCompressionUtils.copyStreamToFile;
 
 public interface ZstdExtractor extends ArchiveExtractor {
-    String TEMP_FILE_PREFIX = "zstd_temp_";
-    String TEMP_FILE_SUFFIX = "_decompressed";
+
     String ZSTD_COMPRESSION = "zstd";
 
     ExtensionHolder getExtensionHolder();
@@ -86,12 +87,13 @@ public interface ZstdExtractor extends ArchiveExtractor {
     @Override
     default void extractFiles(@NotNull File archive, @NotNull ArchiveFileSelector archiveFileSelector) throws IOException {
         Logger.debug("Call extractFiles " + archive.getName());
+        StagingArea stagingArea = new TempStagingArea();
+
         try {
             String archiveParentFolder = archive.getParent();
             Logger.debug("Folder for decompressed file: " + archiveParentFolder);
-
-            File targetDirTempFile = new File(archiveParentFolder);
-            File decompressedTempFile = File.createTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX, targetDirTempFile);
+            stagingArea.setParent(archiveParentFolder);
+            File decompressedTempFile = stagingArea.createTempFile();
 
             Path archivePath = archive.toPath();
             Path decompressedTempFilePath = decompressedTempFile.toPath();
@@ -114,6 +116,10 @@ public interface ZstdExtractor extends ArchiveExtractor {
         } catch (Exception e) {
             Logger.error("ZSTD Exception during decompression", e);
             throw new IOException(e.getMessage());
+        } finally {
+            Logger.debug("Executing cleanup for temp files");
+            boolean cleaned = stagingArea.cleanup();
+            Logger.debug("Cleanup status: "+ cleaned);
         }
     }
 
