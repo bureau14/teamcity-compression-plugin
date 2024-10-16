@@ -27,10 +27,10 @@ public class InterceptorAgentImpl implements InterceptorAgent {
     public void install(){
         Instrumentation installedInstrumentation = ByteBuddyAgent.install();
         Logger.info("ZSTD instrumentation: "+installedInstrumentation);
-        setInterceptor(ArchiveUtil.class,"isArchive", new ArchiveUtilInterceptorImpl());
+        setInterceptor(ArchiveUtil.class,"isArchive", ArchiveUtilInterceptorImpl.class);
     }
 
-    public void setInterceptor(Class target, String targetMethodName, Interceptor interceptor){
+    public void setInterceptor(Class target, String targetMethodName, Class interceptor){
         Logger.info("ZSTD set interceptor for "+target+ "."+targetMethodName+" to "+interceptor);
         DynamicType loadedType =this.byteBuddy
                 .redefine(target)
