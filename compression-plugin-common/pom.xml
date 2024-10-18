@@ -4,7 +4,7 @@
   <parent>
     <artifactId>compression-plugin</artifactId>
     <groupId>net.quasardb.teamcity</groupId>
-    <version>1.3</version>
+    <version>1.5-RC</version>
   </parent>
   <artifactId>compression-plugin-common</artifactId>
   <packaging>jar</packaging>
@@ -30,9 +30,23 @@
     </dependency>
 
     <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy-agent</artifactId>
+      <version>1.15.4</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy</artifactId>
+      <version>1.15.4</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.jetbrains.teamcity</groupId>
       <artifactId>common-api</artifactId>
-      <version>2024.07</version>
+      <version>${teamcity-version}</version>
       <scope>provided</scope>
     </dependency>
 

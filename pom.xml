@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.quasardb.teamcity</groupId>
   <artifactId>compression-plugin</artifactId>
-  <version>1.3</version>
+  <version>1.5-RC</version>
   <packaging>pom</packaging>
   <properties>
       <teamcity-version>2024.07</teamcity-version>
@@ -56,6 +56,7 @@
       </pluginManagement>
   </build>
   <modules>
+    <module>archive-utils</module>
     <module>compression-plugin-server</module>
     <module>compression-plugin-agent</module>
     <module>compression-plugin-common</module>
