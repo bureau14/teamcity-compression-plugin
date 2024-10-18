@@ -1,0 +1,29 @@
+--- ArchiveUtil.java	2024-07-15 19:20:48.000000000 -0400
++++ ArchiveUtil.java	2024-10-17 10:38:42.070266600 -0400
+@@ -93,6 +93,8 @@
+ //    return ArchiveType.TAR_BZ2;
+     } else if (name.endsWith(".7z")) {
+       return ArchiveType.SEVEN_Z;
++    } else if (name.endsWith(".zst")) {
++      return ArchiveType.ZSTD;
+     }
+     return ArchiveType.NOT_ARCHIVE;
+   }
+@@ -323,7 +325,7 @@
+   }
+ 
+   /**
+-   * Same as {@link #packZip(java.io.File, java.util.zip.ZipOutputStream)}, but allows to specify
++   * Same as {@link #packZip(File, ZipOutputStream)}, but allows to specify
+    * the filename filter additionally.
+    *
+    * @param root   root file or directory
+@@ -634,7 +636,7 @@
+    * @param archive           - a particular archive tp process
+    * @param innerPathToFolder may contains "!/", e.g. "/", "/folder1/", "/folder/archive.zip!/", "/foo/archive.zip!/baz"
+    * @return see above
+-   * @throws java.io.IOException if IOException occurs
++   * @throws IOException if IOException occurs
+    * @since 8.0
+    */
+   @NotNull
