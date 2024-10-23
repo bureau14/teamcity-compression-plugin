@@ -1,5 +1,16 @@
 --- ArchiveUtil.java	2024-07-15 19:20:48.000000000 -0400
 +++ ArchiveUtil.java	2024-10-17 10:38:42.070266600 -0400
+@@ -62,6 +63,10 @@
+   private static final String TEAMCITY_ARCHIVE_BUFFER_SIZE_PROPERTY = "teamcity.archiveUtil.bufferSize";
+   private static final int ARCHIVE_BUFFER_SIZE_BYTES_DEFAULT = 64 * 1024;
+
++  static {
++    LOG.info("LOADED PATCHER ARCHIVE UTIL");
++  }
++
+   /**
+    * Determines the archive type based on a file name.
+    * <p>
 @@ -93,6 +93,8 @@
  //    return ArchiveType.TAR_BZ2;
      } else if (name.endsWith(".7z")) {
