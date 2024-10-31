@@ -9,6 +9,7 @@ import net.quasardb.teamcity.compression.logging.Logger;
 public class ZstdAgentArchiveExtractor implements ZstdExtractor, AgentExtension {
 
     private final ExtensionHolder extensionHolder;
+    private static ZstdExtractor INSTANCE;
 
     public ZstdAgentArchiveExtractor(ExtensionHolder extensionHolder) {
         this.extensionHolder = extensionHolder;
@@ -20,5 +21,14 @@ public class ZstdAgentArchiveExtractor implements ZstdExtractor, AgentExtension 
     @Override
     public ExtensionHolder getExtensionHolder() {
         return this.extensionHolder;
+    }
+
+    @Override
+    public void postRegister() {
+        INSTANCE = this;
+    }
+
+    public static ZstdExtractor get(){
+        return INSTANCE;
     }
 }

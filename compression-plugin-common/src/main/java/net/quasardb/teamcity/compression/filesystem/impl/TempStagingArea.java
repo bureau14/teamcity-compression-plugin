@@ -5,6 +5,7 @@ import net.quasardb.teamcity.compression.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +17,25 @@ public class TempStagingArea implements StagingArea {
 
     public TempStagingArea() {}
 
+    public TempStagingArea(boolean createTempParent) {
+        try {
+            this.stagingAreaFile = Files.createTempDirectory(TEMP_FILE_PREFIX).toFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public synchronized File createTempFile() throws IOException {
         File tempFile =  File.createTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX, this.stagingAreaFile);
         Logger.debug("Temp file "+tempFile.getName()+ " created");
         fileCache.add(tempFile);
         return tempFile;
+    }
+
+    @Override
+    public File createTempDirectory() throws IOException {
+        return Files.createTempDirectory(TEMP_FILE_PREFIX).toFile();
     }
 
     @Override

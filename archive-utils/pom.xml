@@ -31,61 +31,73 @@
             <version>${teamcity-version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>net.quasardb.teamcity</groupId>
+            <artifactId>compression-plugin-server</artifactId>
+            <version>1.5-RC</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.quasardb.teamcity</groupId>
+            <artifactId>compression-plugin-agent</artifactId>
+            <version>1.5-RC</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.8.0</version>
-                <executions>
-                    <execution>
-                        <id>unpack</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.jetbrains.teamcity</groupId>
-                                    <artifactId>common-api</artifactId>
-                                    <version>${teamcity-version}</version>
-                                    <type>jar</type>
-                                    <classifier>sources</classifier>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
-                                    <includes>**/ArchiveUtil.java, **/ArchiveType.java</includes>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-patch-plugin</artifactId>
-                <version>1.2</version>
-                <configuration>
-                    <targetDirectory>${project.build.sourceDirectory}/jetbrains/buildServer/util</targetDirectory>
-                    <patchDirectory>src/main/patches</patchDirectory>
-                    <patchTrackingFile>${project.build.directory}/patches-applied.txt</patchTrackingFile>
-                    <naturalOrderProcessing>true</naturalOrderProcessing>
-                    <patches>
-                        <patch>ArchiveUtil.patch</patch>
-                        <patch>ArchiveType.patch</patch>
-                    </patches>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>patch</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>apply</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-dependency-plugin</artifactId>-->
+<!--                <version>3.8.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>unpack</id>-->
+<!--                        <phase>generate-sources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>unpack</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <artifactItems>-->
+<!--                                <artifactItem>-->
+<!--                                    <groupId>org.jetbrains.teamcity</groupId>-->
+<!--                                    <artifactId>common-api</artifactId>-->
+<!--                                    <version>${teamcity-version}</version>-->
+<!--                                    <type>jar</type>-->
+<!--                                    <classifier>sources</classifier>-->
+<!--                                    <overWrite>true</overWrite>-->
+<!--                                    <outputDirectory>${project.build.sourceDirectory}</outputDirectory>-->
+<!--                                    <includes>**/ArchiveUtil.java, **/ArchiveType.java</includes>-->
+<!--                                </artifactItem>-->
+<!--                            </artifactItems>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-patch-plugin</artifactId>-->
+<!--                <version>1.2</version>-->
+<!--                <configuration>-->
+<!--                    <targetDirectory>${project.build.sourceDirectory}/jetbrains/buildServer/util</targetDirectory>-->
+<!--                    <patchDirectory>src/main/patches</patchDirectory>-->
+<!--                    <patchTrackingFile>${project.build.directory}/patches-applied.txt</patchTrackingFile>-->
+<!--                    <naturalOrderProcessing>true</naturalOrderProcessing>-->
+<!--                    <patches>-->
+<!--                        <patch>ArchiveUtil.patch</patch>-->
+<!--                        <patch>ArchiveType.patch</patch>-->
+<!--                    </patches>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>patch</id>-->
+<!--                        <phase>generate-sources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>apply</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
