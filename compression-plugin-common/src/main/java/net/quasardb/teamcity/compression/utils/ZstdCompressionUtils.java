@@ -21,7 +21,7 @@ public class ZstdCompressionUtils {
                 return true;
             }
         }catch (Exception e){
-            Logger.error("File is not ZSTD compressed", e);
+            Logger.debug("File is not ZSTD compressed: "+e);
         }
         return false;
     }
@@ -34,7 +34,7 @@ public class ZstdCompressionUtils {
                     return true;
                 }
             }catch (Exception e){
-                Logger.error("Could not detect archiver type", e);
+                Logger.debug("Could not detect archiver type: "+e);
             }
             return false;
     }
