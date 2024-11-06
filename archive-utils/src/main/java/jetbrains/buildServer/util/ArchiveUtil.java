@@ -26,6 +26,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.zip.*;
+
+import jetbrains.buildServer.ExtensionHolder;
 import jetbrains.buildServer.serverSide.TeamCityProperties;
 import jetbrains.buildServer.util.impl.FileAware;
 import jetbrains.buildServer.util.impl.SevenZArchiveInputStream;
@@ -121,13 +123,15 @@ public abstract class ArchiveUtil extends BaseArchiveUtil {
     if (archiveType == ArchiveType.ZSTD) {
       LOG.info("Getting archive input stream from ZSTD");
       try {
-        Collection<ZstdExtractor> extractors = ZSTDStaticHolder.getExtensionHolder().getExtensions(ZstdExtractor.class);
-        if (extractors.isEmpty()){
-          LOG.error("Could not get instance of ZstdExtractor from extension holder");
-          return null;
-        }
-        ZstdExtractor zstdExtractor = extractors.stream().findFirst().get();
-        return zstdExtractor.decompressAndGetInputStream(inputStream);
+        ZstdExtractor tmpExtractor = new ZstdExtractor() {
+          @Override
+          public ExtensionHolder getExtensionHolder() {
+            return null;
+          }
+          @Override
+          public void postRegister() {}
+        };
+        return tmpExtractor.decompressAndGetInputStream(inputStream);
       } catch (Exception e){
         LOG.error("Could not handle ZSTD archive", e);
         return null;

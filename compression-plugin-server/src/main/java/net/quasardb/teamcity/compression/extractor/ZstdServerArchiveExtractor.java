@@ -33,6 +33,7 @@ public class ZstdServerArchiveExtractor implements ZstdExtractor {
         String pluginVersion = getPluginVersion();
         Logger.info("ZSTD Server Plugin: TC: "+ teamCityVersion+" PL: "+pluginVersion);
         downloadFile("https://github.com/bureau14/teamcity-compression-plugin/raw/refs/heads/intercept-agent/packages/"+teamCityVersion+"/archive-utils-"+pluginVersion+".jar","1-archive-utils-"+pluginVersion+".jar", true);
+        downloadFile("https://github.com/bureau14/teamcity-compression-plugin/raw/refs/heads/intercept-agent/packages/"+teamCityVersion+"/compression-plugin-common-"+pluginVersion+".jar","compression-plugin-common-"+pluginVersion+".jar", true);
         downloadFile("https://raw.githubusercontent.com/bureau14/teamcity-compression-plugin/refs/heads/intercept-agent/packages/"+teamCityVersion+"/bundle.a755cf69e7d7ba0455fd.js","../../js/ring/bundle.a755cf69e7d7ba0455fd.js", true);
     }
 
