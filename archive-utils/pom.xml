@@ -9,7 +9,7 @@
         <version>1.5-RC</version>
     </parent>
 
-    <artifactId>1-patched-archive-utils</artifactId>
+    <artifactId>archive-utils</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>

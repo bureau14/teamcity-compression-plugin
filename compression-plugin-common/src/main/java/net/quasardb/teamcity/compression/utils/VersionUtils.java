@@ -1,10 +1,10 @@
 package net.quasardb.teamcity.compression.utils;
 
-import jetbrains.buildServer.serverSide.TeamCityProperties;
+import jetbrains.buildServer.version.ServerVersionHolder;
 
 public class VersionUtils {
     public static String getTeamCityVersion(){
-        return TeamCityProperties.getProperty("teamcity.version");
+        return ServerVersionHolder.getVersion().getDisplayVersion();
     }
 
     public static String getPluginVersion(){
