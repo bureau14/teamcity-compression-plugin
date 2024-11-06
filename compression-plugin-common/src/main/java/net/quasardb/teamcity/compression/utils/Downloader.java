@@ -30,7 +30,12 @@ public class Downloader {
                         Logger.error("ZSTD Server Plugin: BackupFile: "+ backupFile.getAbsolutePath() + " exists! Will not replace");
                         return;
                     }
-                    FileUtils.moveFile(targetFile, backupFile);
+                    try{
+                        FileUtils.copyFile(targetFile, backupFile);
+                    } catch (Exception e){
+                        Logger.error("ZSTD Server Plugin: Could not backup file", e);
+                    }
+
                 }
 
             }
