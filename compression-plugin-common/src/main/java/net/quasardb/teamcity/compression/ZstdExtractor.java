@@ -53,7 +53,6 @@ public interface ZstdExtractor extends ArchiveExtractor {
         } catch (IOException e) {
             Logger.error("Caught exception during compression test of archive", e);
         }
-        Logger.info("isSupported: " + result);
         return result;
     }
 

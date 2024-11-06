@@ -30,7 +30,6 @@ import jetbrains.buildServer.serverSide.TeamCityProperties;
 import jetbrains.buildServer.util.impl.FileAware;
 import jetbrains.buildServer.util.impl.SevenZArchiveInputStream;
 import net.quasardb.teamcity.compression.ZstdExtractor;
-import net.quasardb.teamcity.compression.agent.extractor.ZstdAgentArchiveExtractor;
 import net.quasardb.teamcity.compression.extractor.ZstdServerArchiveExtractor;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -122,12 +121,13 @@ public abstract class ArchiveUtil extends BaseArchiveUtil {
     if (archiveType == ArchiveType.ZSTD) {
       LOG.info("Getting archive input stream from ZSTD");
       try {
-        ZstdExtractor zstdExtractor = ZstdServerArchiveExtractor.get();
-        if(zstdExtractor==null){
-          LOG.error("Could not get instance of ZstdExtractor");
-        } else {
-          return zstdExtractor.decompressAndGetInputStream(inputStream);
+        Collection<ZstdExtractor> extractors = ZSTDStaticHolder.getExtensionHolder().getExtensions(ZstdExtractor.class);
+        if (extractors.isEmpty()){
+          LOG.error("Could not get instance of ZstdExtractor from extension holder");
+          return null;
         }
+        ZstdExtractor zstdExtractor = extractors.stream().findFirst().get();
+        return zstdExtractor.decompressAndGetInputStream(inputStream);
       } catch (Exception e){
         LOG.error("Could not handle ZSTD archive", e);
         return null;

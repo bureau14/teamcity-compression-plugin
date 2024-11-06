@@ -44,4 +44,9 @@ public class ZstdTestArchiveExtractor implements ZstdExtractor {
         }
         return null;
     }
+
+    @Override
+    public void postRegister() {
+
+    }
 }
