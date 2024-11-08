@@ -4,7 +4,9 @@ import jetbrains.buildServer.version.ServerVersionHolder;
 
 public class VersionUtils {
     public static String getTeamCityVersion(){
-        return ServerVersionHolder.getVersion().getDisplayVersion();
+        String major = String.valueOf(ServerVersionHolder.getVersion().getDisplayVersionMajor());
+        String minor = String.valueOf(ServerVersionHolder.getVersion().getDisplayVersionMinor());
+        return major+"."+minor;
     }
 
     public static String getPluginVersion(){

@@ -79,7 +79,7 @@ public interface ZstdExtractor extends ArchiveExtractor {
         Path decompressedTempFilePath = decompressedTempFile.toPath();
         try (CompressorInputStream in = new CompressorStreamFactory().createCompressorInputStream(ZSTD_COMPRESSION, inputStream)) {
             Files.copy(in, decompressedTempFilePath, StandardCopyOption.REPLACE_EXISTING);
-            try (InputStream is = Files.newInputStream(decompressedTempFilePath)) {
+            try (InputStream is = new BufferedInputStream(Files.newInputStream(decompressedTempFilePath))) {
                 return new ArchiveStreamFactory().createArchiveInputStream(is);
             }
         }
