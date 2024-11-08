@@ -6,6 +6,9 @@ public class VersionUtils {
     public static String getTeamCityVersion(){
         String major = String.valueOf(ServerVersionHolder.getVersion().getDisplayVersionMajor());
         String minor = String.valueOf(ServerVersionHolder.getVersion().getDisplayVersionMinor());
+        if(minor.length()==1){
+            minor = "0"+minor;
+        }
         return major+"."+minor;
     }
 
