@@ -4,7 +4,7 @@
   <parent>
     <artifactId>compression-plugin</artifactId>
     <groupId>net.quasardb.teamcity</groupId>
-    <version>1.5-RC</version>
+    <version>1.6</version>
   </parent>
   <artifactId>compression-plugin-common</artifactId>
   <packaging>jar</packaging>
