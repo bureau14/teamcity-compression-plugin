@@ -1,34 +1,24 @@
 package net.quasardb.teamcity.compression;
 
 import com.github.luben.zstd.util.Native;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.openapi.util.SystemInfo;
 import jetbrains.buildServer.ExtensionHolder;
-import jetbrains.buildServer.log.Loggers;
 import jetbrains.buildServer.util.ArchiveExtractor;
 import jetbrains.buildServer.util.ArchiveFileSelector;
-import jetbrains.buildServer.util.FileUtil;
 import net.quasardb.teamcity.compression.filesystem.StagingArea;
 import net.quasardb.teamcity.compression.filesystem.impl.TempStagingArea;
 import net.quasardb.teamcity.compression.logging.Logger;
 import net.quasardb.teamcity.compression.utils.ZstdCompressionUtils;
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.file.*;
-import java.nio.file.attribute.PosixFilePermission;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static net.quasardb.teamcity.compression.utils.ZstdCompressionUtils.copyStreamToFile;
 
 public interface ZstdExtractor extends ArchiveExtractor {
 
@@ -63,7 +53,6 @@ public interface ZstdExtractor extends ArchiveExtractor {
         } catch (IOException e) {
             Logger.error("Caught exception during compression test of archive", e);
         }
-        Logger.info("isSupported: " + result);
         return result;
     }
 
@@ -82,6 +71,17 @@ public interface ZstdExtractor extends ArchiveExtractor {
             }
             Files.copy(file, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
+    }
+
+    default ArchiveInputStream decompressAndGetInputStream(@NotNull InputStream inputStream) throws CompressorException, IOException, ArchiveException {
+        StagingArea stagingArea = new TempStagingArea(true);
+        File decompressedTempFile = stagingArea.createTempFile();
+        Path decompressedTempFilePath = decompressedTempFile.toPath();
+        try (CompressorInputStream in = new CompressorStreamFactory().createCompressorInputStream(ZSTD_COMPRESSION, inputStream)) {
+            Files.copy(in, decompressedTempFilePath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        InputStream is = new BufferedInputStream(Files.newInputStream(decompressedTempFilePath));
+        return new ArchiveStreamFactory().createArchiveInputStream(is);
     }
 
     @Override
@@ -138,7 +138,10 @@ public interface ZstdExtractor extends ArchiveExtractor {
     default void register() {
         Logger.debug("Registering plugin " + this.getClass().getName() + " with " + getExtensionHolder().toString());
         getExtensionHolder().registerExtension(ArchiveExtractor.class, this.getClass().getName(), this);
+        postRegister();
     }
+
+    void postRegister();
 
     default void loadNativeZstdLib(){
         Logger.debug("ZSTD Loading Native lib...");

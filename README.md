@@ -34,5 +34,23 @@ This plugin provided basic support for *.zst archives ( on serverside as well as
 
 # Logs
 
-Plugin will ue root serer logger to write logs. 
+Plugin will use root server logger to write logs.
+
+# Patching ArchiveUtil in runtime
+To be able to see content of the zst archive in the runtime we need to patch class `ArchiveUtil`
+1. Comment ```wrapper.app.parameter.8=-XX:+DisableAttachMechanism``` in the ```buildAgent/launcher/conf/wrapper.conf```
+2. In the```buildAgent/launcher/conf/wrapper.conf``` set wrapper java to JDK17 ( as it is max jdk version supported by agent)
+
+If you are not using wrapper and starting agent with custom script 
+1. Please set var ```TEAMCITY_JRE=jdk17_location```
+2. In the `agent.sh` remove ```-XX:+DisableAttachMechanism``` from jdk options
+3. add to the jvm options ```-Djdk.attach.allowAttachSelf=true```
+
+If everything is correct you should see in the log
+```
+[2024-10-15 22:36:42,268]   INFO -   jetbrains.buildServer.SERVER - ZSTD creating interceptor: net.bytebuddy.ByteBuddy@f372d42a
+[2024-10-15 22:36:42,507]   INFO -   jetbrains.buildServer.SERVER - ZSTD instrumentation: sun.instrument.InstrumentationImpl@4545770c
+[2024-10-15 22:36:42,521]   INFO -   jetbrains.buildServer.SERVER - ZSTD set interceptor for class jetbrains.buildServer.util.ArchiveUtil.isArchive to class net.quasardb.teamcity.compression.intercept.impl.ArchiveUtilInterceptorImpl
+[2024-10-15 22:36:43,135]   INFO -   jetbrains.buildServer.SERVER - ZSTD interceptor loaded: net.bytebuddy.dynamic.DynamicType$Default$Loaded@5667bbc8
+```
 

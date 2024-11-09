@@ -3,5 +3,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-autowire="constructor">
+<!--  <bean class="net.quasardb.teamcity.compression.intercept.agent.impl.InterceptorAgentImpl" init-method="install"/>-->
   <bean class="net.quasardb.teamcity.compression.extractor.ZstdServerArchiveExtractor" init-method="register"/>
 </beans>
