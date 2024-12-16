@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.quasardb.teamcity</groupId>
   <artifactId>compression-plugin</artifactId>
-  <version>1.6</version>
+  <version>1.7</version>
   <packaging>pom</packaging>
   <properties>
-      <teamcity-version>2024.07</teamcity-version>
+      <teamcity-version>2024.12</teamcity-version>
   </properties>
   <repositories>
     <repository>
