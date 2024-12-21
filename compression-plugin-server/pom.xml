@@ -4,7 +4,7 @@
   <parent>
     <artifactId>compression-plugin</artifactId>
     <groupId>net.quasardb.teamcity</groupId>
-    <version>1.5-RC</version>
+    <version>1.7</version>
   </parent>
   <artifactId>compression-plugin-server</artifactId>
   <packaging>jar</packaging>
@@ -20,7 +20,7 @@
     <dependency>
       <groupId>net.quasardb.teamcity</groupId>
       <artifactId>compression-plugin-common</artifactId>
-      <version>1.5-RC</version>
+      <version>1.7</version>
       <scope>compile</scope>
     </dependency>
 
