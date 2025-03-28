@@ -6,6 +6,7 @@ import net.quasardb.teamcity.compression.ZstdExtractor;
 import net.quasardb.teamcity.compression.logging.Logger;
 
 import static net.quasardb.teamcity.compression.utils.Downloader.downloadFile;
+import static net.quasardb.teamcity.compression.utils.UIUtils.modifyBundleJsFile;
 import static net.quasardb.teamcity.compression.utils.VersionUtils.getPluginVersion;
 import static net.quasardb.teamcity.compression.utils.VersionUtils.getTeamCityVersion;
 
@@ -34,8 +35,9 @@ public class ZstdServerArchiveExtractor implements ZstdExtractor {
         Logger.info("ZSTD Server Plugin: TC: "+ teamCityVersion+" PL: "+pluginVersion);
         downloadFile("https://github.com/bureau14/teamcity-compression-plugin/raw/refs/heads/master/packages/"+teamCityVersion+"/archive-utils-"+pluginVersion+".jar","1-archive-utils.jar", true);
         downloadFile("https://github.com/bureau14/teamcity-compression-plugin/raw/refs/heads/master/packages/"+teamCityVersion+"/compression-plugin-common-"+pluginVersion+".jar","compression-plugin-common.jar", true);
-        downloadFile("https://raw.githubusercontent.com/bureau14/teamcity-compression-plugin/refs/heads/master/packages/"+teamCityVersion+"/bundle.a755cf69e7d7ba0455fd.js","../../js/ring/bundle.a755cf69e7d7ba0455fd.js", true);
-        downloadFile("https://raw.githubusercontent.com/bureau14/teamcity-compression-plugin/refs/heads/master/packages/"+teamCityVersion+"/bundle.e0116cb6d7e0c97480bc.js","../../js/ring/bundle.e0116cb6d7e0c97480bc.js", true);
+        modifyBundleJsFile("../../js/ring");
+//        downloadFile("https://raw.githubusercontent.com/bureau14/teamcity-compression-plugin/refs/heads/master/packages/"+teamCityVersion+"/bundle.a755cf69e7d7ba0455fd.js","../../js/ring/bundle.a755cf69e7d7ba0455fd.js", true);
+//        downloadFile("https://raw.githubusercontent.com/bureau14/teamcity-compression-plugin/refs/heads/master/packages/"+teamCityVersion+"/bundle.e0116cb6d7e0c97480bc.js","../../js/ring/bundle.e0116cb6d7e0c97480bc.js", true);
     }
 
     public static ZstdExtractor get(){
