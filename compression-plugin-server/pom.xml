@@ -55,9 +55,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jetbrains.teamcity.internal</groupId>
+      <groupId>org.jetbrains.teamcity</groupId>
       <artifactId>plugins</artifactId>
-      <version>${teamcity-version}-SNAPSHOT</version>
+      <version>${teamcity-version}</version>
       <scope>provided</scope>
     </dependency>
 
