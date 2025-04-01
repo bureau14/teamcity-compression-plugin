@@ -6,8 +6,13 @@ import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class FileSystemUtils {
     @NotNull
@@ -26,8 +31,11 @@ public class FileSystemUtils {
         File backupFile = new File(parentFolder,targetFile.getName()+"_backup_"+System.currentTimeMillis());
         String backupFilePath = backupFile.getAbsolutePath();
         if(backupFile.exists()){
-            Logger.error("ZSTD Server Plugin: BackupFile: "+ backupFilePath + " exists! Will replace");
-            return null;
+            Logger.error("ZSTD Server Plugin: BackupFile: "+ backupFilePath + " exists! Checking MD5");
+            if (compareFilesMD5(targetFile,backupFile)){
+                Logger.info("ZSTD Server Plugin: Backup and target already identical");
+                return backupFilePath;
+            }
         }
         try{
             FileUtils.copyFile(targetFile, backupFile);
@@ -35,5 +43,22 @@ public class FileSystemUtils {
             Logger.error("ZSTD Server Plugin: Could not backup file", e);
         }
         return backupFilePath;
+    }
+
+    static boolean compareFilesMD5(File source, File destination) {
+        try {
+            MessageDigest md5=MessageDigest.getInstance("MD5");
+            byte[] sourceFileBytes = Files.readAllBytes(source.toPath());
+            byte[] sourceFileHash = md5.digest(sourceFileBytes);
+
+            byte[] destFileBytes = Files.readAllBytes(destination.toPath());
+            byte[] destFileHash = md5.digest(destFileBytes);
+            return Arrays.equals(sourceFileHash, destFileHash);
+        } catch (IOException e) {
+            Logger.error("ZSTD Server Plugin: Error comparing MD5",e);
+        } catch (NoSuchAlgorithmException e) {
+            Logger.error("ZSTD Server Plugin: Error getting MD5 algo",e);
+        }
+        return false;
     }
 }
