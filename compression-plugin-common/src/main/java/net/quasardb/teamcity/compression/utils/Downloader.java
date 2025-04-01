@@ -1,14 +1,17 @@
 package net.quasardb.teamcity.compression.utils;
 
-import jetbrains.buildServer.util.ArchiveUtil;
 import net.quasardb.teamcity.compression.logging.Logger;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+
+import static net.quasardb.teamcity.compression.utils.FileSystemUtils.backupFile;
+import static net.quasardb.teamcity.compression.utils.FileSystemUtils.getLibsDirFile;
 
 public class Downloader {
 
@@ -24,13 +27,7 @@ public class Downloader {
         DeploymentStatus deploymentStatus = DeploymentStatus.FAILURE;
         try{
 
-            URL url = ArchiveUtil.class.getProtectionDomain().getCodeSource().getLocation();
-            Logger.info("ZSTD Server Plugin: ArchiveUtil.class location: "+url);
-            String serverLibsPath = url.toURI().getPath();
-            Logger.info("ZSTD Server Plugin: Local path: "+serverLibsPath);
-            File jarFile = new File(serverLibsPath);
-            File libsDirFile = jarFile.toPath().getParent().toFile();
-            Logger.info("ZSTD Server Plugin: Libs path: "+libsDirFile.getAbsolutePath());
+            File libsDirFile = getLibsDirFile();
             File targetFile = new File(libsDirFile,targetFileName);
             targetFilePath = targetFile.getAbsolutePath();
             if (targetFile.exists()){
@@ -38,17 +35,7 @@ public class Downloader {
                     Logger.error("ZSTD Server Plugin: TargetFile: "+ targetFilePath + " exists! Skipping download");
                     return;
                 }else {
-                    File backupFile = new File(libsDirFile,targetFileName+"_backup_"+System.currentTimeMillis());
-                    backupFilePath = backupFile.getAbsolutePath();
-                    if(backupFile.exists()){
-                        Logger.error("ZSTD Server Plugin: BackupFile: "+ backupFilePath + " exists! Will replace");
-                    }
-                    try{
-                        FileUtils.copyFile(targetFile, backupFile);
-                    } catch (Exception e){
-                        Logger.error("ZSTD Server Plugin: Could not backup file", e);
-                    }
-
+                    backupFilePath = backupFile(libsDirFile,targetFile);
                 }
 
             }
@@ -77,9 +64,9 @@ public class Downloader {
         File recordsFile = new File(home,DEPLOYMENT_RECORDS_FILE);
         String deploymentLine = String.valueOf(System.currentTimeMillis())+"|"+fileUrl+ "|"+String.valueOf(targetFilePath) + "|" + String.valueOf(backupFilePath) + "|" + String.valueOf(status)+ System.lineSeparator();
         try {
-            Files.writeString(
+            Files.write(
                     recordsFile.toPath(),
-                    deploymentLine,
+                    deploymentLine.getBytes(StandardCharsets.UTF_8),
                     StandardOpenOption.CREATE, StandardOpenOption.APPEND
             );
         } catch (IOException e) {
